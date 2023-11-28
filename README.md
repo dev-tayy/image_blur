@@ -9,7 +9,13 @@ This Flutter package provides the ability to add shimmer and blur effects to you
 
 ![XRecorder_Edited_27112023_162436](https://github.com/Swan1993/image_blur/assets/59397057/78009863-4f27-4edf-9655-c2b9cff0fbfa)
 
-
+## Initialize the cache configuration
+```dart
+void main() async {
+  await ImageBlur.init();
+  runApp(const MyApp());
+}
+```
 ## Getting started
 
 ```yaml
