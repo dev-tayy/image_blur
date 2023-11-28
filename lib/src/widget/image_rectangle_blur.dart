@@ -103,20 +103,17 @@ class _ImageRectangleBlurState extends State<ImageRectangleBlur>
     with SingleTickerProviderStateMixin {
    late AnimationController blurController;
   late Animation<double> sigmaXAnimation;
-  bool showImage = false; // اضافه کردن یک متغیر برای نمایش تصویر
+  bool showImage = false;
 
   @override
   void initState() {
     blurController = AnimationController(duration: Duration(seconds: widget.durationBlur), vsync: this);
     sigmaXAnimation = Tween<double>(begin: 5, end: 0.0).animate(blurController);
 
-    // ایجاد یک listener برای Blur Animation تا وقتی که Blur تمام شد، تصویر رو نمایش بدیم
-    blurController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        setState(() {
-          showImage = true;
-        });
-      }
+    blurController.forward().then((_) {
+      setState(() {
+        showImage = true;
+      });
     });
 
     super.initState();
@@ -133,100 +130,39 @@ class _ImageRectangleBlurState extends State<ImageRectangleBlur>
     return SizedBox(
       width: widget.width,
       height: widget.height,
-      child: FutureBuilder(
-        future: Future.delayed(Duration(seconds: widget.isShimmer ? widget.durationShimmer : 0), () => true),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return widget.isShimmer
-                ? ShimmerImage(
-                    height: MediaQuery.of(context).size.height,
-                    width: MediaQuery.of(context).size.width,
-                    baseColorShimmer: widget.baseColorShimmer,
-                    colorShimmer: widget.colorShimmer,
-                    highlightColorShimmer: widget.highlightColorShimmer,
-                  )
-                : const SizedBox.shrink();
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            return showImage
-                ? Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      (widget.imageAssets != null || widget.imageNetwork != null)
-                          ? (widget.imageAssets != null
-                              ? Image.asset(
-                                  widget.imageAssets!,
-                                  fit: BoxFit.cover,
-                                  height: MediaQuery.of(context).size.height,
-                                  width: MediaQuery.of(context).size.width,
-                                )
-                              : Image.network(
-                                  widget.imageNetwork!,
-                                  fit: BoxFit.cover,
-                                  height: MediaQuery.of(context).size.height,
-                                  width: MediaQuery.of(context).size.width,
-                                ))
-                          : const Text("Image not provided"),
-                      ClipRect(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                            sigmaX: sigmaXAnimation.value,
-                            sigmaY: sigmaXAnimation.value,
-                            tileMode: TileMode.decal,
-                          ),
-                          child: widget.imageNetwork != null
-                              ? Image.network(
-                                  widget.imageNetwork!,
-                                  fit: BoxFit.cover,
-                                  colorBlendMode: widget.colorBlendMode,
-                                  color: widget.color,
-                                  alignment: widget.alignment,
-                                  height: widget.height,
-                                  width: widget.width,
-                                  centerSlice: widget.centerSlice,
-                                  errorBuilder: widget.errorBuilder,
-                                  filterQuality: widget.filterQuality,
-                                  frameBuilder: widget.frameBuilder,
-                                  gaplessPlayback: widget.gapLessPlayback,
-                                  isAntiAlias: widget.isAntiAlias,
-                                  loadingBuilder: widget.loadingBuilder,
-                                  opacity: widget.opacity,
-                                  semanticLabel: widget.semanticLabel,
-                                  repeat: widget.repeat,
-                                  matchTextDirection: widget.matchTextDirection,
-                                  cacheHeight: widget.cacheHeight,
-                                  cacheWidth: widget.cacheWidth,
-                                  headers: widget.headers,
-                                )
-                              : Image.asset(
-                                  widget.imageAssets!,
-                                  fit: BoxFit.cover,
-                                  colorBlendMode: widget.colorBlendMode,
-                                  color: widget.color,
-                                  alignment: widget.alignment,
-                                  height: widget.height,
-                                  width: widget.width,
-                                  centerSlice: widget.centerSlice,
-                                  errorBuilder: widget.errorBuilder,
-                                  filterQuality: widget.filterQuality,
-                                  frameBuilder: widget.frameBuilder,
-                                  gaplessPlayback: widget.gapLessPlayback,
-                                  isAntiAlias: widget.isAntiAlias,
-                                  opacity: widget.opacity,
-                                  semanticLabel: widget.semanticLabel,
-                                  repeat: widget.repeat,
-                                  matchTextDirection: widget.matchTextDirection,
-                                  cacheHeight: widget.cacheHeight,
-                                  cacheWidth: widget.cacheWidth,
-                                ),
-                        ),
-                      ),
-                    ],
-                  )
-                : const SizedBox.shrink();
-          } else {
-            return Text("${snapshot.error}");
-          }
-        },
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          showImage
+              ? (widget.imageAssets != null || widget.imageNetwork != null)
+                  ? (widget.imageAssets != null
+                      ? Image.asset(
+                          widget.imageAssets!,
+                          fit: BoxFit.cover,
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width,
+                        )
+                      : Image.network(
+                          widget.imageNetwork!,
+                          fit: BoxFit.cover,
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width,
+                        ))
+                  : const Text("Image not provided")
+              : const SizedBox.shrink(),
+          ClipRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: sigmaXAnimation.value,
+                sigmaY: sigmaXAnimation.value,
+                tileMode: TileMode.decal,
+              ),
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
