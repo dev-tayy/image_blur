@@ -1,5 +1,7 @@
-
+![blur-4](https://github.com/SwanFlutter/image_blur/assets/151648897/b741abd2-2912-493d-8a8e-0df2b3963e18)
 This Flutter package provides the ability to add shimmer and blur effects to your images. You can apply these effects in circular and rectangular shapes, and use them with both local and online images.
+
+![blur](https://github.com/SwanFlutter/image_blur/assets/151648897/8278e724-2cfd-41ab-9a0d-5d60cd65e1bb)
 
 ## Initialize the cache configuration
 ```dart
@@ -20,6 +22,7 @@ height: size.height,
 );
 ```
 
+![blur-3](https://github.com/SwanFlutter/image_blur/assets/151648897/4e065444-1c6d-4442-bcee-01a68e635ae1)
 
 
 ```dart
@@ -27,6 +30,8 @@ ImageBlur(
 imageUrl: listimage[index],
 );
 ```
+
+![blur-4](https://github.com/SwanFlutter/image_blur/assets/151648897/39cabc43-6ddd-4e4f-bbde-82f7a32f3bf6)
 
 
 
@@ -38,6 +43,7 @@ imagePath:
 )
 ```
 
+![blur-1](https://github.com/SwanFlutter/image_blur/assets/151648897/19aada15-2690-4679-8c2f-48b497314fce)
 
 
 ```dart
@@ -47,6 +53,7 @@ imageNetwork:
 "https://img.freepik.com/free-photo/nature-tranquil-beauty-reflected-calm-water-generative-ai_188544-12798.jpg?size=626&ext=jpg&ga=GA1.1.8332681.1703272078&semt=ais",
 ),
 ```
+![blur-2](https://github.com/SwanFlutter/image_blur/assets/151648897/5ed111cf-fb4b-4f51-8f10-8f811f4ec654)
 
 
 ## Getting started
@@ -63,41 +70,15 @@ import 'package:image_blur/image_blur.dart';
 
 ```
 
-## example
-
-```dart
- ImageBlur.imageRectangleBlur(
-imageAssets: "assets/post.jpg",
-height: 250,
-width: 250,
-isBlur: true,
-),
-```
-
-```dart
-ImageBlur.imageCircularBlur(
-size: 250,
-imageNetwork: "https://images.pexels.com/photos/1042423/pexels-photo-1042423.jpeg?auto=compress&cs=tinysrgb&w=1600",
-)                           
-```
-
-
-```dart
-ImageBlur.ImageDownloadBlur(
-imageUrl: imageUrls[index],
-),
-```
-
-
-
 ## Complete example
 ```dart
 
 import 'package:flutter/material.dart';
 import 'package:image_blur/image_blur.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await ImageBlur.init(removeCacheTime: 10);
   runApp(const MyApp());
 }
 
@@ -173,9 +154,8 @@ class Search extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12.0),
                             ),
-                            child: ImageBlur.imageRectangleBlur(
-                              isBlur: true,
-                              //  imageNetwork: imageUrls[index],
+                            child: ImageBlur(
+                               imageUrls: imageUrls[index],
                               width: size.width,
                               height: size.height,
                             ),
