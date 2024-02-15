@@ -1,9 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+
 import '../tools/shimmer_image_tools.dart';
 
-class ImageCircularBlur extends StatefulWidget {
+class ImageCircularBlur extends StatelessWidget {
   final String? imageNetwork;
 
   final String? imageAssets;
@@ -60,98 +61,76 @@ class ImageCircularBlur extends StatefulWidget {
 
   final Color colorShimmer;
 
-  const ImageCircularBlur(
-      {super.key,
-      this.imageNetwork,
-      this.imageAssets,
-      this.durationShimmer = 2,
-      this.durationBlur = 2,
-      this.size,
-      this.fit = BoxFit.cover,
-      this.colorBlendMode = BlendMode.srcIn,
-      this.color,
-      this.alignment = Alignment.center,
-      this.centerSlice,
-      this.opacity,
-      this.errorBuilder,
-      this.filterQuality = FilterQuality.low,
-      this.frameBuilder,
-      this.gapLessPlayback = false,
-      this.loadingBuilder,
-      this.matchTextDirection = false,
-      this.repeat = ImageRepeat.noRepeat,
-      this.semanticLabel,
-      this.isAntiAlias = false,
-      this.isBlur = true,
-      this.isShimmer = true,
-      this.cacheHeight,
-      this.cacheWidth,
-      this.headers,
-      this.baseColorShimmer = const Color.fromRGBO(224, 224, 224, 1),
-      this.highlightColorShimmer = const Color.fromRGBO(245, 245, 245, 1),
-      this.colorShimmer = Colors.white});
+  final Color? placeholderColor;
 
-  @override
-  State<ImageCircularBlur> createState() => _ImageCircularBlurState();
-}
-
-class _ImageCircularBlurState extends State<ImageCircularBlur>
-    with SingleTickerProviderStateMixin {
-  late AnimationController blurController;
-  late Animation<double> sigmaXAnimation;
-
-  @override
-  void initState() {
-    blurController = AnimationController(
-        duration: Duration(seconds: widget.durationBlur), vsync: this);
-    sigmaXAnimation = Tween<double>(begin: 5, end: 0.0).animate(blurController);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    blurController.dispose();
-    super.dispose();
-  }
-
+  const ImageCircularBlur({
+    super.key,
+    this.imageNetwork,
+    this.imageAssets,
+    this.durationShimmer = 2,
+    this.durationBlur = 2,
+    this.size,
+    this.fit = BoxFit.cover,
+    this.colorBlendMode = BlendMode.srcIn,
+    this.color,
+    this.alignment = Alignment.center,
+    this.centerSlice,
+    this.opacity,
+    this.errorBuilder,
+    this.filterQuality = FilterQuality.low,
+    this.frameBuilder,
+    this.gapLessPlayback = false,
+    this.loadingBuilder,
+    this.matchTextDirection = false,
+    this.repeat = ImageRepeat.noRepeat,
+    this.semanticLabel,
+    this.isAntiAlias = false,
+    this.isBlur = true,
+    this.isShimmer = true,
+    this.cacheHeight,
+    this.cacheWidth,
+    this.headers,
+    this.baseColorShimmer = const Color.fromRGBO(224, 224, 224, 1),
+    this.highlightColorShimmer = const Color.fromRGBO(245, 245, 245, 1),
+    this.colorShimmer = Colors.white,
+    this.placeholderColor = const Color.fromRGBO(224, 224, 224, 1),
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.size,
-      height: widget.size,
-      decoration: const BoxDecoration(shape: BoxShape.circle),
+      width: size,
+      height: size,
+      decoration:
+          BoxDecoration(shape: BoxShape.circle, color: placeholderColor),
       child: ClipOval(
         child: FutureBuilder(
           future: Future.delayed(
-              Duration(seconds: widget.isShimmer ? widget.durationShimmer : 0),
-              () => true),
+              Duration(seconds: isShimmer ? durationShimmer : 0), () => true),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return widget.isShimmer
+              return isShimmer
                   ? ShimmerImage(
                       height: MediaQuery.of(context).size.height,
                       width: MediaQuery.of(context).size.width,
-                      baseColorShimmer: widget.baseColorShimmer,
-                      colorShimmer: widget.colorShimmer,
-                      highlightColorShimmer: widget.highlightColorShimmer,
+                      baseColorShimmer: baseColorShimmer,
+                      colorShimmer: colorShimmer,
+                      highlightColorShimmer: highlightColorShimmer,
                     )
                   : const SizedBox.shrink();
             } else if (snapshot.connectionState == ConnectionState.done) {
               return FutureBuilder(
                 future: Future.delayed(
-                    Duration(seconds: widget.isBlur ? widget.durationBlur : 0),
-                    () => true),
+                    Duration(seconds: isBlur ? durationBlur : 0), () => true),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return widget.isBlur
+                    return isBlur
                         ? Stack(
                             fit: StackFit.expand,
                             children: [
-                              (widget.imageAssets != null ||
-                                      widget.imageNetwork != null)
-                                  ? (widget.imageAssets != null
+                              (imageAssets != null || imageNetwork != null)
+                                  ? (imageAssets != null
                                       ? Image.asset(
-                                          widget.imageAssets!,
+                                          imageAssets!,
                                           fit: BoxFit.cover,
                                           height: MediaQuery.of(context)
                                               .size
@@ -160,7 +139,7 @@ class _ImageCircularBlurState extends State<ImageCircularBlur>
                                               MediaQuery.of(context).size.width,
                                         )
                                       : Image.network(
-                                          widget.imageNetwork!,
+                                          imageNetwork!,
                                           fit: BoxFit.cover,
                                           height: MediaQuery.of(context)
                                               .size
@@ -169,72 +148,82 @@ class _ImageCircularBlurState extends State<ImageCircularBlur>
                                               MediaQuery.of(context).size.width,
                                         ))
                                   : const Text("Image not provided"),
-                              ClipRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: sigmaXAnimation.value,
-                                    sigmaY: sigmaXAnimation.value,
-                                    tileMode: TileMode.decal,
-                                  ),
-                                  child: widget.imageNetwork != null
-                                      ? Image.network(
-                                          widget.imageNetwork!,
-                                          fit: BoxFit.cover,
-                                          colorBlendMode: widget.colorBlendMode,
-                                          color: widget.color,
-                                          alignment: widget.alignment,
-                                          height: widget.size,
-                                          width: widget.size,
-                                          centerSlice: widget.centerSlice,
-                                          errorBuilder: widget.errorBuilder,
-                                          filterQuality: widget.filterQuality,
-                                          frameBuilder: widget.frameBuilder,
-                                          gaplessPlayback:
-                                              widget.gapLessPlayback,
-                                          isAntiAlias: widget.isAntiAlias,
-                                          loadingBuilder: widget.loadingBuilder,
-                                          opacity: widget.opacity,
-                                          semanticLabel: widget.semanticLabel,
-                                          repeat: widget.repeat,
-                                          matchTextDirection:
-                                              widget.matchTextDirection,
-                                          cacheHeight: widget.cacheHeight,
-                                          cacheWidth: widget.cacheWidth,
-                                          headers: widget.headers,
-                                        )
-                                      : Image.asset(
-                                          widget.imageAssets!,
-                                          fit: BoxFit.cover,
-                                          colorBlendMode: widget.colorBlendMode,
-                                          color: widget.color,
-                                          alignment: widget.alignment,
-                                          height: widget.size,
-                                          width: widget.size,
-                                          centerSlice: widget.centerSlice,
-                                          errorBuilder: widget.errorBuilder,
-                                          filterQuality: widget.filterQuality,
-                                          frameBuilder: widget.frameBuilder,
-                                          gaplessPlayback:
-                                              widget.gapLessPlayback,
-                                          isAntiAlias: widget.isAntiAlias,
-                                          opacity: widget.opacity,
-                                          semanticLabel: widget.semanticLabel,
-                                          repeat: widget.repeat,
-                                          matchTextDirection:
-                                              widget.matchTextDirection,
-                                          cacheHeight: widget.cacheHeight,
-                                          cacheWidth: widget.cacheWidth,
-                                        ),
+                              BackdropFilter(
+                                filter: ImageFilter.blur(
+                                  sigmaX: 5.0,
+                                  sigmaY: 5.0,
+                                  tileMode: TileMode.decal,
+                                ),
+                                child: Container(
+                                  color: Colors.black.withOpacity(0.1),
                                 ),
                               ),
                             ],
                           )
                         : const SizedBox.shrink();
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    if (imageNetwork != null || imageAssets != null) {
+                      return (imageNetwork != null
+                          ? Container(
+                              color: Colors.grey.shade300,
+                              child: Image.network(
+                                imageNetwork!,
+                                fit: BoxFit.cover,
+                                colorBlendMode: colorBlendMode,
+                                color: color,
+                                alignment: alignment,
+                                height: size,
+                                width: size,
+                                centerSlice: centerSlice,
+                                errorBuilder: errorBuilder,
+                                filterQuality: filterQuality,
+                                frameBuilder: frameBuilder,
+                                gaplessPlayback: gapLessPlayback,
+                                isAntiAlias: isAntiAlias,
+                                loadingBuilder: loadingBuilder,
+                                opacity: opacity,
+                                semanticLabel: semanticLabel,
+                                repeat: repeat,
+                                matchTextDirection: matchTextDirection,
+                                cacheHeight: cacheHeight,
+                                cacheWidth: cacheWidth,
+                                headers: headers,
+                              ),
+                            )
+                          : Container(
+                              color: Colors.grey.shade300,
+                              child: Image.asset(
+                                imageAssets!,
+                                fit: BoxFit.cover,
+                                colorBlendMode: colorBlendMode,
+                                color: color,
+                                alignment: alignment,
+                                height: size,
+                                width: size,
+                                centerSlice: centerSlice,
+                                errorBuilder: errorBuilder,
+                                filterQuality: filterQuality,
+                                frameBuilder: frameBuilder,
+                                gaplessPlayback: gapLessPlayback,
+                                isAntiAlias: isAntiAlias,
+                                opacity: opacity,
+                                semanticLabel: semanticLabel,
+                                repeat: repeat,
+                                matchTextDirection: matchTextDirection,
+                                cacheHeight: cacheHeight,
+                                cacheWidth: cacheWidth,
+                              ),
+                            ));
+                    } else {
+                      return const Text("Image not provided");
+                    }
                   } else {
                     return Text("${snapshot.error}");
                   }
                 },
               );
+            } else if (snapshot.connectionState == ConnectionState.active) {
+              return Container();
             } else {
               return Text("${snapshot.error}");
             }

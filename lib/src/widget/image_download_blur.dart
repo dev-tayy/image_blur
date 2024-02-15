@@ -1,6 +1,7 @@
 import 'dart:ui';
-import 'package:flutter/material.dart';
+
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+import 'package:flutter/material.dart';
 
 class ImageDownloadBlur extends StatefulWidget {
   final String imageUrl;
@@ -57,6 +58,8 @@ class ImageDownloadBlur extends StatefulWidget {
 
   final int? memCacheWidth;
 
+  final Color? placeholderColor;
+
   const ImageDownloadBlur({
     required this.imageUrl,
     super.key,
@@ -86,6 +89,7 @@ class ImageDownloadBlur extends StatefulWidget {
     this.scale = 1.0,
     this.memCacheHeight,
     this.memCacheWidth,
+    this.placeholderColor = const Color.fromRGBO(224, 224, 224, 1),
   });
 
   @override
@@ -98,10 +102,12 @@ class _ImageDownloadBlurState extends State<ImageDownloadBlur> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       height: widget.height,
       width: widget.width,
+      color: widget.placeholderColor,
       child: FastCachedImage(
+        errorBuilder: (context, url, error) => const Icon(Icons.error),
         url: widget.imageUrl,
         height: widget.height,
         width: widget.width,
@@ -109,8 +115,7 @@ class _ImageDownloadBlurState extends State<ImageDownloadBlur> {
         cacheHeight: widget.memCacheHeight,
         cacheWidth: widget.memCacheWidth,
         loadingBuilder: (context, downloadProgress) {
-          if (downloadProgress.totalBytes != null &&
-              downloadProgress.totalBytes! > 0) {
+          if (downloadProgress.totalBytes != null) {
             double progressValue = (downloadProgress.downloadedBytes /
                     downloadProgress.totalBytes!) *
                 25;
@@ -146,11 +151,7 @@ class _ImageDownloadBlurState extends State<ImageDownloadBlur> {
               ),
             );
           } else {
-            return Container(
-              color: widget.backgroundImage,
-              width: widget.width,
-              height: widget.height,
-            );
+            return Container();
           }
         },
       ),

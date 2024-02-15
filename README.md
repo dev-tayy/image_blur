@@ -1,15 +1,6 @@
 
 This Flutter package provides the ability to add shimmer and blur effects to your images. You can apply these effects in circular and rectangular shapes, and use them with both local and online images.
 
-
-
-## Features
-
-![20231028_104357](https://github.com/SwanFlutter/image_blur/assets/151648897/69690164-df90-48f0-a0a2-0788fd5a0b4b)
-
-![XRecorder_Edited_27112023_162436](https://github.com/SwanFlutter/image_blur/assets/151648897/010dee40-8e71-4074-bae9-e87942a76a66)
-
-
 ## Initialize the cache configuration
 ```dart
 void main() async {
@@ -17,6 +8,47 @@ void main() async {
   runApp(const MyApp());
 }
 ```
+
+## Features
+
+
+```dart
+ImageBlur.imageHashPreview(
+imagePath: imageUrls[index],
+width: size.width,
+height: size.height,
+);
+```
+
+
+
+```dart
+ImageBlur(
+imageUrl: listimage[index],
+);
+```
+
+
+
+```dart
+ImageBlur.imageHashPreviewCircular(
+ size: 340,
+imagePath:
+"https://img.freepik.com/free-vector/abstract-speaker-background_1048-2038.jpg?w=740&t=st=1708002577~exp=1708003177~hmac=75e6d3504cc3a4c077d56bcb181983b2ff88d51d5457a7dd10c039c3fec813d2",
+)
+```
+
+
+
+```dart
+ImageBlur.imageCircularBlur(
+size: 340,
+imageNetwork:
+"https://img.freepik.com/free-photo/nature-tranquil-beauty-reflected-calm-water-generative-ai_188544-12798.jpg?size=626&ext=jpg&ga=GA1.1.8332681.1703272078&semt=ais",
+),
+```
+
+
 ## Getting started
 
 ```yaml

@@ -1,3 +1,5 @@
 ## 1.0.1
 
-* fix bug.
+* Update package.
+* Add ImageHashPreview.
+* Add ImageHashPreviewCircular.
