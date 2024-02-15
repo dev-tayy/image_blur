@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_blur/image_blur.dart';
-import 'package:t3/home.dart';
+//import 'package:new_image_blur_test/screen.dart';
 
 void main() async {
-  await ImageBlur.init(removeCacheTime: 10);
+  WidgetsFlutterBinding.ensureInitialized();
+  await ImageBlur.init(removeCacheTime: 5);
   runApp(const MyApp());
 }
 
@@ -32,7 +33,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static const List<String> imageUrls = <String>[
+  List listimage = [
     "https://img.freepik.com/free-photo/nature-tranquil-beauty-reflected-calm-water-generative-ai_188544-12798.jpg?size=626&ext=jpg&ga=GA1.1.8332681.1703272078&semt=ais",
     "https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg?size=626&ext=jpg&ga=GA1.1.8332681.1703272078&semt=ais",
     "https://img.freepik.com/free-photo/forest-landscape_71767-127.jpg?size=626&ext=jpg&ga=GA1.1.8332681.1703272078&semt=ais",
@@ -51,46 +52,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        title: const Text("Test"),
-        centerTitle: true,
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text('Flutter Demo Home Page'),
       ),
       body: SingleChildScrollView(
         child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+          width: size.width,
+          height: size.height,
           child: GridView.builder(
-            physics: const BouncingScrollPhysics(),
+            itemCount: listimage.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 3,
-              mainAxisSpacing: 3,
-              mainAxisExtent: 120,
-            ),
-            itemCount: imageUrls.length,
-            itemBuilder: (BuildContext context, int index) {
-              return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: ImageBlur.imageHashPreview(
-                  imagePath: imageUrls[index],
-                ),
+                crossAxisCount: 3,
+                mainAxisSpacing: 3,
+                crossAxisSpacing: 3,
+                mainAxisExtent: 200,
+                childAspectRatio: 0.6),
+            itemBuilder: (context, index) {
+              //'https://picsum.photos/200/300?random=$index'
+              return ImageBlur(
+                imageUrl: listimage[index],
               );
             },
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => const Home()));
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
