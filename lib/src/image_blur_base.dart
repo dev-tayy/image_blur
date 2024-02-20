@@ -149,6 +149,14 @@ class ImageBlur extends StatefulWidget {
   ///The color of the placeholder image.
   final Color? placeholderColor;
 
+  final BorderRadiusGeometry borderRadius;
+
+  ///If non-null, the corners of this box are rounded by this [BorderRadius].
+  ///Applies only to boxes with rectangular shapes; ignored if [shape] is not [BoxShape.rectangle].
+  ///The [shape] or the [borderRadius] won't clip the children of the decorated [Container].
+  /// If the clip is required, insert a clip widget (e.g., [ClipRect], [ClipRRect], [ClipPath]) as the child of the [Container].
+  ///  Be aware that clipping may be costly in terms of performance.
+
   const ImageBlur({
     required this.imageUrl,
     super.key,
@@ -179,6 +187,7 @@ class ImageBlur extends StatefulWidget {
     this.memCacheHeight,
     this.memCacheWidth,
     this.placeholderColor = const Color.fromRGBO(224, 224, 224, 1),
+    this.borderRadius = BorderRadius.zero,
   });
 
   static Widget imageCircularBlur({
@@ -505,6 +514,7 @@ class ImageBlur extends StatefulWidget {
     final int? cacheWidth,
     final int? cacheHeight,
     final double scale = 1.0,
+    final BorderRadiusGeometry borderRadius = BorderRadius.zero,
   }) {
     return ImageHashPreview(
       imagePath: imagePath,
@@ -623,59 +633,65 @@ class _ImageBlurState extends State<ImageBlur> {
   @override
   Widget build(BuildContext context) {
     double blurValue = 0.0;
-    return Container(
-      height: widget.height,
-      width: widget.width,
-      color: widget.placeholderColor,
-      child: FastCachedImage(
-        errorBuilder: (context, url, error) => const Icon(Icons.error),
-        url: widget.imageUrl,
+    return ClipRRect(
+      borderRadius: widget.borderRadius,
+      child: Container(
         height: widget.height,
         width: widget.width,
-        fit: widget.fit,
-        cacheHeight: widget.memCacheHeight,
-        cacheWidth: widget.memCacheWidth,
-        loadingBuilder: (context, downloadProgress) {
-          if (downloadProgress.totalBytes != null &&
-              downloadProgress.totalBytes! > 0) {
-            double progressValue = (downloadProgress.downloadedBytes /
-                    downloadProgress.totalBytes!) *
-                25;
+        decoration: BoxDecoration(
+          color: widget.placeholderColor,
+          borderRadius: widget.borderRadius,
+        ),
+        child: FastCachedImage(
+          errorBuilder: (context, url, error) => const Icon(Icons.error),
+          url: widget.imageUrl,
+          height: widget.height,
+          width: widget.width,
+          fit: widget.fit,
+          cacheHeight: widget.memCacheHeight,
+          cacheWidth: widget.memCacheWidth,
+          loadingBuilder: (context, downloadProgress) {
+            if (downloadProgress.totalBytes != null &&
+                downloadProgress.totalBytes! > 0) {
+              double progressValue = (downloadProgress.downloadedBytes /
+                      downloadProgress.totalBytes!) *
+                  25;
 
-            blurValue = 25 - progressValue;
-            return ImageFiltered(
-              imageFilter: ImageFilter.blur(
-                sigmaX: blurValue,
-                sigmaY: blurValue,
-                tileMode: TileMode.decal,
-              ),
-              child: Image.network(
-                widget.imageUrl,
-                width: widget.width,
-                height: widget.height,
-                fit: widget.fit,
-                colorBlendMode: widget.colorBlendMode,
-                color: widget.color,
-                alignment: widget.alignment,
-                centerSlice: widget.centerSlice,
-                errorBuilder: widget.errorBuilder,
-                filterQuality: widget.filterQuality,
-                gaplessPlayback: widget.gapLessPlayback,
-                isAntiAlias: widget.isAntiAlias,
-                opacity: widget.opacity,
-                semanticLabel: widget.semanticLabel,
-                repeat: widget.repeat,
-                matchTextDirection: widget.matchTextDirection,
-                cacheHeight: widget.cacheHeight,
-                cacheWidth: widget.cacheWidth,
-                frameBuilder: widget.frameBuilder,
-                scale: widget.scale,
-              ),
-            );
-          } else {
-            return SizedBox.shrink();
-          }
-        },
+              blurValue = 25 - progressValue;
+              return ImageFiltered(
+                imageFilter: ImageFilter.blur(
+                  sigmaX: blurValue,
+                  sigmaY: blurValue,
+                  tileMode: TileMode.decal,
+                ),
+                child: Image.network(
+                  widget.imageUrl,
+                  width: widget.width,
+                  height: widget.height,
+                  fit: widget.fit,
+                  colorBlendMode: widget.colorBlendMode,
+                  color: widget.color,
+                  alignment: widget.alignment,
+                  centerSlice: widget.centerSlice,
+                  errorBuilder: widget.errorBuilder,
+                  filterQuality: widget.filterQuality,
+                  gaplessPlayback: widget.gapLessPlayback,
+                  isAntiAlias: widget.isAntiAlias,
+                  opacity: widget.opacity,
+                  semanticLabel: widget.semanticLabel,
+                  repeat: widget.repeat,
+                  matchTextDirection: widget.matchTextDirection,
+                  cacheHeight: widget.cacheHeight,
+                  cacheWidth: widget.cacheWidth,
+                  frameBuilder: widget.frameBuilder,
+                  scale: widget.scale,
+                ),
+              );
+            } else {
+              return SizedBox.shrink();
+            }
+          },
+        ),
       ),
     );
   }
