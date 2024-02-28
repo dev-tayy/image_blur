@@ -1,5 +1,3 @@
-library image_blur;
-
 import 'dart:ui';
 
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
