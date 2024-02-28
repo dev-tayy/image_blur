@@ -4,9 +4,9 @@ import 'dart:ui';
 
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_blur/src/widget/Image_hash_preview.dart';
-import 'package:image_blur/src/widget/Image_hash_preview_circular.dart';
 import 'package:image_blur/src/widget/image_circular_blur.dart';
+import 'package:image_blur/src/widget/image_hash_preview.dart';
+import 'package:image_blur/src/widget/image_hash_preview_circular.dart';
 
 class ImageBlur extends StatefulWidget {
   final String imageUrl;

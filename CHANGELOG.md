@@ -1,4 +1,4 @@
-## 1.0.1
+## 1.0.2
 
-* Add praperty borderRadius.
+* Fix Pub Point.
 
