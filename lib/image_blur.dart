@@ -533,7 +533,7 @@ class ImageBlur extends StatefulWidget {
       color: color,
       alignment: alignment,
       centerSlice: centerSlice,
-      opacity: animatedOpacity,
+      opacity: opacity,
       filterQuality: filterQuality,
       repeat: repeat,
       matchTextDirection: matchTextDirection,

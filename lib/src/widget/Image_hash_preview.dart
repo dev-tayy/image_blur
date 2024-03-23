@@ -46,7 +46,7 @@ class ImageHashPreview extends StatefulWidget {
 
   final double? height;
 
-  final int? opacity;
+  final double? opacity;
 
   final Color? placeholderColor;
 
@@ -143,8 +143,7 @@ class _ImageHashPreviewState extends State<ImageHashPreview> {
               return Stack(
                 children: [
                   Opacity(
-                    opacity: (widget.opacity ?? 0.0)
-                        .toDouble(), // Set opacity to 0 to hide the image
+                    opacity: widget.opacity ?? 0.0, // Set opacity to 0 to hide the image
                     child: Image.network(
                       widget.imagePath,
                       width: widget.width,
