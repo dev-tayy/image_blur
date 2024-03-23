@@ -19,10 +19,10 @@ class ImageHashPreview extends StatefulWidget {
     this.onReady,
     this.onDisplayed,
     this.colorBlendMode = BlendMode.srcIn,
+    this.animatedOpacity,
     this.color,
     this.alignment = Alignment.center,
     this.centerSlice,
-    this.opacity,
     this.filterQuality = FilterQuality.low,
     this.repeat = ImageRepeat.noRepeat,
     this.matchTextDirection = false,
@@ -36,6 +36,7 @@ class ImageHashPreview extends StatefulWidget {
     this.cacheWidth,
     this.cacheHeight,
     this.scale = 1.0,
+    this.opacity,
     this.borderRadius = BorderRadius.zero,
   }) : super(key: key);
 
@@ -44,6 +45,8 @@ class ImageHashPreview extends StatefulWidget {
   final double? width;
 
   final double? height;
+
+  final int? opacity;
 
   final Color? placeholderColor;
 
@@ -73,7 +76,7 @@ class ImageHashPreview extends StatefulWidget {
 
   final Rect? centerSlice;
 
-  final Animation<double>? opacity;
+  final Animation<double>? animatedOpacity;
 
   final FilterQuality filterQuality;
 
@@ -140,7 +143,8 @@ class _ImageHashPreviewState extends State<ImageHashPreview> {
               return Stack(
                 children: [
                   Opacity(
-                    opacity: 0.0, // Set opacity to 0 to hide the image
+                    opacity: (widget.opacity ?? 0.0)
+                        .toDouble(), // Set opacity to 0 to hide the image
                     child: Image.network(
                       widget.imagePath,
                       width: widget.width,
@@ -150,7 +154,7 @@ class _ImageHashPreviewState extends State<ImageHashPreview> {
                       color: widget.color,
                       alignment: widget.alignment,
                       centerSlice: widget.centerSlice,
-                      opacity: widget.opacity,
+                      opacity: widget.animatedOpacity,
                       filterQuality: widget.filterQuality,
                       repeat: widget.repeat,
                       matchTextDirection: widget.matchTextDirection,
